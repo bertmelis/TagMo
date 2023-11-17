@@ -537,42 +537,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun showFileChooser(title: String, resultCode: Int) {
-        if (Version.isKitKat) {
-            try {
-                when (resultCode) {
-                    RESULT_KEYS -> {
-                        onLoadKeyDocuments.launch(resources.getStringArray(R.array.mimetype_bin))
-                    }
-                    RESULT_IMPORT_AMIIBO_DATABASE -> {
-                        onImportAmiiboDBDocument.launch(resources.getStringArray(R.array.mimetype_json))
-                    }
+        try {
+            when (resultCode) {
+                RESULT_KEYS -> {
+                    onLoadKeyDocuments.launch(resources.getStringArray(R.array.mimetype_bin))
                 }
-            } catch (ex: ActivityNotFoundException) {
-                Debug.verbose(ex)
-            }
-        } else {
-            val selection = Intent(
-                    if (Version.isKitKat) Intent.ACTION_OPEN_DOCUMENT else Intent.ACTION_GET_CONTENT
-            )
-                    .setType("*/*").addCategory(Intent.CATEGORY_OPENABLE)
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    .putExtra("android.content.extra.SHOW_ADVANCED", true)
-                    .putExtra("android.content.extra.FANCY", true)
-            try {
-                when (resultCode) {
-                    RESULT_KEYS -> {
-                        if (Version.isJellyBeanMR2)
-                            selection.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                        onLoadKeys.launch(Intent.createChooser(selection, title))
-                    }
-                    RESULT_IMPORT_AMIIBO_DATABASE -> {
-                        onImportAmiiboDB.launch(Intent.createChooser(selection, title))
-                    }
+                RESULT_IMPORT_AMIIBO_DATABASE -> {
+                    onImportAmiiboDBDocument.launch(resources.getStringArray(R.array.mimetype_json))
                 }
-            } catch (ex: ActivityNotFoundException) {
-                Debug.verbose(ex)
             }
+        } catch (ex: ActivityNotFoundException) {
+            Debug.verbose(ex)
         }
     }
 
